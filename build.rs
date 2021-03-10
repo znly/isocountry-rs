@@ -1,7 +1,7 @@
 use std::{env, error::Error, path::Path};
 
 use serde::{Deserialize, Serialize};
-use tinytemplate::TinyTemplate;
+use tinytemplate::{format_unescaped, TinyTemplate};
 
 /// A country as represented by the ISO 3166-1 standard
 #[derive(Serialize, Deserialize)]
@@ -71,6 +71,7 @@ fn generate_subdivision_file(
 ) -> Result<String, Box<dyn Error>> {
     let mut tt = TinyTemplate::new();
     tt.add_template("subdivision", template)?;
+    tt.set_default_formatter(&format_unescaped);
 
     let ctx = TemplateContext {
         subdivisions: values.map(Into::into).collect(),
