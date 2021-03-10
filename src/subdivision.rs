@@ -89,3 +89,32 @@ pub enum SubdivisionCodeParseError {
     #[error("invalid iso subdivison code string")]
     InvalidCode,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn convert_from_and_to_string() {
+        let tests = [
+            ("US-NY", Ok(Code::US_NY)),
+            ("FR-75", Ok(Code::FR_75)),
+            ("GB-ABC", Ok(Code::GB_ABC)),
+            // Invalid inputs
+            ("FR_75", Err(SubdivisionCodeParseError::InvalidCode)), // Underscore instead of dash
+            ("fr-75", Err(SubdivisionCodeParseError::InvalidCode)), // Lowercase
+            ("invalid", Err(SubdivisionCodeParseError::InvalidCode)),
+        ];
+
+        for (raw, expected) in &tests {
+            let actual = Code::from_str(raw);
+            assert_eq!(expected, &actual);
+
+            // re-convert
+            if let Ok(actual) = actual {
+                let str = actual.to_string();
+                assert_eq!(str, raw.to_string());
+            }
+        }
+    }
+}
