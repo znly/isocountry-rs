@@ -20,6 +20,16 @@ const {s.code_identifier}: Subdivision = Subdivision \{
 
 // -----------------------------------------------------------------------------
 
+impl From<Code> for Subdivision \{
+    fn from(code: Code) -> Self \{
+        match code \{
+        {{ - for s in subdivisions }}
+            Code::{s.code_identifier} => {s.code_identifier},
+        {{ - endfor }}
+        }
+    }
+}
+
 impl Display for Code \{
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> \{
         let formatted_code = match *self \{
