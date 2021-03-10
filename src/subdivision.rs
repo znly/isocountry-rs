@@ -1,7 +1,7 @@
 #![allow(non_camel_case_types, dead_code)]
 use serde::{
     de::{self, Visitor},
-    Serialize, Serializer,
+    Deserialize, Serialize, Serializer,
 };
 use std::{
     fmt::{self, Display},
