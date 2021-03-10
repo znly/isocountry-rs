@@ -12,9 +12,12 @@ repository = "https://github.com/sifton/isocountry-rs.git"
 edition = "2018"
 build = "build.rs"
 
+[features]
+serde1 = ["serde"]
+
 [dependencies]
 thiserror = "1.0"
-serde = "1.0"
+serde = { version = "1.0", optional = true }
 
 [build-dependencies]
 tinytemplate = "1.2"

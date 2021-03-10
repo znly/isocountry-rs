@@ -1,4 +1,6 @@
 #![allow(non_camel_case_types, dead_code)]
+
+#[cfg(feature = "serde1")]
 use serde::{
     de::{self, Visitor},
     Deserialize, Serialize, Serializer,
@@ -39,6 +41,7 @@ include!(concat!(env!("OUT_DIR"), "/subdivision.rs"));
 
 // -----------------------------------------------------------------------------
 
+#[cfg(feature = "serde1")]
 impl Serialize for Subdivision {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -48,8 +51,10 @@ impl Serialize for Subdivision {
     }
 }
 
+#[cfg(feature = "serde1")]
 struct SubdivisionVisitor;
 
+#[cfg(feature = "serde")]
 impl<'de> Visitor<'de> for SubdivisionVisitor {
     type Value = Code;
 

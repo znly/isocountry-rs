@@ -19,9 +19,11 @@
 //LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
-
-use serde::de::{self, Visitor};
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+#[cfg(feature = "serde1")]
+use serde::{
+    de::{self, Visitor},
+    Deserialize, Deserializer, Serialize, Serializer,
+};
 use std::fmt::{self, Display};
 use thiserror::Error;
 
@@ -2444,8 +2446,10 @@ impl Display for CountryCode {
     }
 }
 
+#[cfg(feature = "serde1")]
 struct CountryCodeVisitor;
 
+#[cfg(feature = "serde1")]
 impl Serialize for CountryCode {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -2455,6 +2459,7 @@ impl Serialize for CountryCode {
     }
 }
 
+#[cfg(feature = "serde1")]
 impl<'de> Deserialize<'de> for CountryCode {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -2464,6 +2469,7 @@ impl<'de> Deserialize<'de> for CountryCode {
     }
 }
 
+#[cfg(feature = "serde1")]
 impl<'de> Visitor<'de> for CountryCodeVisitor {
     type Value = CountryCode;
 
