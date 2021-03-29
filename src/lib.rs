@@ -19,7 +19,7 @@
 //LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde-integration")]
 use serde::{
     de::{self, Visitor},
     Deserialize, Deserializer, Serialize, Serializer,
@@ -2446,10 +2446,10 @@ impl Display for CountryCode {
     }
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde-integration")]
 struct CountryCodeVisitor;
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde-integration")]
 impl Serialize for CountryCode {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -2459,7 +2459,7 @@ impl Serialize for CountryCode {
     }
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde-integration")]
 impl<'de> Deserialize<'de> for CountryCode {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -2469,7 +2469,7 @@ impl<'de> Deserialize<'de> for CountryCode {
     }
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde-integration")]
 impl<'de> Visitor<'de> for CountryCodeVisitor {
     type Value = CountryCode;
 

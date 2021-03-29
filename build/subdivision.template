@@ -1,5 +1,5 @@
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde-integration", derive(Serialize, Deserialize))]
 /// An enumeration of all ISO-3166-2 subdivision codes
 pub enum Code \{
 {{ - for s in subdivisions }}
@@ -8,27 +8,7 @@ pub enum Code \{
 {{ - endfor }}
 }
 
-{{ - for s in subdivisions }}
-
-/// {s.name}
-const {s.code_identifier}: Subdivision = Subdivision \{ 
-    name: "{s.name}", 
-    ty: "{s.type}",    
-    code: Code::{s.code_identifier},
-};
-{{ - endfor }}
-
 // -----------------------------------------------------------------------------
-
-impl From<Code> for Subdivision \{
-    fn from(code: Code) -> Self \{
-        match code \{
-        {{ - for s in subdivisions }}
-            Code::{s.code_identifier} => {s.code_identifier},
-        {{ - endfor }}
-        }
-    }
-}
 
 impl Display for Code \{
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> \{
