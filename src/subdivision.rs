@@ -1,9 +1,6 @@
 #![allow(non_camel_case_types, dead_code)]
-#[cfg(feature = "serde1")]
-use serde::{
-    de::{self, Visitor},
-    Deserialize, Deserializer, Serialize, Serializer,
-};
+#[cfg(feature = "serde-integration")]
+use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 use std::{
     fmt::{self, Display},
     str::FromStr,
@@ -14,8 +11,6 @@ use thiserror::Error;
 /// An administrative subdivision as specified by the ISO 3166-2 standard
 pub struct Subdivision {
     code: Code,
-    name: &'static str,
-    ty: &'static str,
 }
 
 impl Subdivision {
@@ -23,19 +18,9 @@ impl Subdivision {
     pub fn code(&self) -> Code {
         self.code
     }
-
-    /// Returns the subdivision name in the language corresponding to the given country
-    pub fn name(&self) -> &'static str {
-        self.name
-    }
-
-    /// Returns the subdivision type specific to the given country
-    pub fn ty(&self) -> &'static str {
-        self.ty
-    }
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde-integration")]
 impl Serialize for Subdivision {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -45,45 +30,16 @@ impl Serialize for Subdivision {
     }
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde-integration")]
 impl<'de> Deserialize<'de> for Subdivision {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
-        deserializer.deserialize_str(SubdivisionVisitor)
-    }
-}
-
-#[cfg(feature = "serde1")]
-struct SubdivisionVisitor;
-
-#[cfg(feature = "serde")]
-impl<'de> Visitor<'de> for SubdivisionVisitor {
-    type Value = Subdivision;
-
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "an ISO 3166-1 compliant alpha-2 country code")
-    }
-
-    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        match Code::from_str(v) {
-            Ok(x) => Ok(x.into()),
-            Err(_) => Err(de::Error::invalid_value(de::Unexpected::Str(v), &self)),
-        }
-    }
-
-    fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        match Code::from_str(v) {
-            Ok(x) => Ok(x.into()),
-            Err(_) => Err(de::Error::invalid_value(de::Unexpected::Str(v), &self)),
-        }
+        let s = String::deserialize(deserializer)?;
+        Code::from_str(&s)
+            .map_err(de::Error::custom)
+            .map(|code| Self { code })
     }
 }
 
@@ -130,31 +86,15 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "serde1")]
+    #[cfg(feature = "serde-integration")]
     fn serialize_subdivision() {
-        let arizona: Subdivision = Subdivision {
-            name: "Arizona",
-            ty: "State",
-            code: Code::US_AZ,
-        };
+        let arizona: Subdivision = Subdivision { code: Code::US_AZ };
 
-        let california: Subdivision = Subdivision {
-            name: "California",
-            ty: "State",
-            code: Code::US_CA,
-        };
+        let california: Subdivision = Subdivision { code: Code::US_CA };
 
-        let colorado: Subdivision = Subdivision {
-            name: "Colorado",
-            ty: "State",
-            code: Code::US_CO,
-        };
+        let colorado: Subdivision = Subdivision { code: Code::US_CO };
 
-        let connecticut: Subdivision = Subdivision {
-            name: "Connecticut",
-            ty: "State",
-            code: Code::US_CT,
-        };
+        let connecticut: Subdivision = Subdivision { code: Code::US_CT };
 
         let tests = [
             (arizona, "US-AZ"),

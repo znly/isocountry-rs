@@ -3,15 +3,6 @@ use std::{env, error::Error, path::Path};
 use serde::{Deserialize, Serialize};
 use tinytemplate::{format_unescaped, TinyTemplate};
 
-/// A country as represented by the ISO 3166-1 standard
-#[derive(Serialize, Deserialize)]
-struct Country {
-    alpha_2: String,
-    alpha_3: String,
-    name: String,
-    numeric: u16,
-}
-
 /// A country subdivision as represented by the ISO 3166-2 standard
 #[derive(Deserialize)]
 struct Subdivision {
@@ -26,12 +17,6 @@ struct Subdivision {
 struct SubdivisionDataset {
     #[serde(rename(deserialize = "3166-2"))]
     subdivisions: Vec<Subdivision>,
-}
-
-#[derive(Deserialize, Serialize)]
-struct CountryDataset {
-    #[serde(rename(deserialize = "3166-1"))]
-    countries: Vec<Country>,
 }
 
 // -----------------------------------------------------------------------------
@@ -83,6 +68,9 @@ fn generate_subdivision_file(
 // -----------------------------------------------------------------------------
 
 fn main() -> Result<(), Box<dyn Error>> {
+    println!("cargo:rerun-if-changed=build/data/data_iso_3166-2.json");
+    println!("cargo:rerun-if-changed=build/subdivision.template");
+
     let iso_3166_2_dataset = std::fs::read_to_string("build/data/data_iso_3166-2.json")?;
     let subdivision_dataset: SubdivisionDataset =
         serde_json::from_str(iso_3166_2_dataset.as_str())?;
